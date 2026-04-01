@@ -1,0 +1,132 @@
+Create a chatbot
+
+Interview-Ready Answer (Short Version) (FAST API - chatbot )
+Uvicorn is an ASGI server designed for async frameworks like FastAPI, using an event loop for high concurrency. Gunicorn is a pre-fork WSGI server that manages multiple worker processes for scalability. In production, we typically combine Gunicorn with Uvicorn workers to get both async performance and process-level scalability.
+
+Bonus (Advanced Insight)
+Uvicorn uses:
+uvloop (fast event loop)
+httptools (fast HTTP parsing)
+Gunicorn provides:
+Worker management
+Load balancing
+Restart handling
+
+🔧 1. Install Dependencies
+pip install fastapi uvicorn openai python-dotenv
+
+📁 2. Project Structure
+ai-chatbot/
+│── app.py
+│── .env
+
+🔐 3. Add API Key (.env)
+OPENAI_API_KEY=your_api_key_here
+
+🚀 4. FastAPI App with LLM Integration (app.py)
+import os
+from fastapi import FastAPI
+from pydantic import BaseModel
+from dotenv import load_dotenv
+from openai import OpenAI
+
+# Load environment variables
+load_dotenv()
+
+# Initialize OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# Create FastAPI app
+app = FastAPI(title="AI Chatbot API")
+
+# Request schema
+class ChatRequest(BaseModel):
+    user_input: str
+
+# Response schema
+class ChatResponse(BaseModel):
+    response: str
+
+# Root endpoint
+@app.get("/")
+def read_root():
+    return {"message": "AI Chatbot is running!"}
+
+# Chat endpoint
+@app.post("/chat", response_model=ChatResponse)
+def chat(request: ChatRequest):
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",  # lightweight model
+            messages=[
+                {"role": "system", "content": "You are a helpful AI assistant."},
+                {"role": "user", "content": request.user_input}
+            ],
+            temperature=0.7,
+            max_tokens=200
+        )
+
+        reply = completion.choices[0].message.content
+
+        return ChatResponse(response=reply)
+
+    except Exception as e:
+        return ChatResponse(response=f"Error: {str(e)}")
+
+▶️ 5. Run the Application
+uvicorn app:app --reload
+
+
+Open in browser:
+
+http://127.0.0.1:8000/docs
+
+
+Test the /chat endpoint.
+
+🧠 6. Example Request
+POST /chat
+{
+  "user_input": "Explain machine learning in simple terms"
+}
+
+🌟 7. Advanced Version (with Context Memory)
+
+Add conversation memory:
+
+conversation_history = []
+
+@app.post("/chat")
+def chat(request: ChatRequest):
+    conversation_history.append({"role": "user", "content": request.user_input})
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "system", "content": "You are a helpful assistant."}] + conversation_history
+    )
+
+    reply = completion.choices[0].message.content
+
+    conversation_history.append({"role": "assistant", "content": reply})
+
+    return {"response": reply}
+
+🧩 8. Real-World Enhancements (Mention in Resume)
+
+You can extend this to show stronger experience:
+
+✅ Add RAG (Retrieval-Augmented Generation) with vector DB (FAISS / Pinecone)
+✅ Integrate with frontend (React UI)
+✅ Use AWS (Lambda + API Gateway)
+✅ Add authentication (JWT)
+✅ Store chat logs in PostgreSQL / DynamoDB
+✅ Use LangChain or LlamaIndex
+📄 Resume Bullet (Use This)
+
+You can now confidently write:
+
+Built and deployed AI-powered chatbot APIs using LLMs (OpenAI GPT models) with FastAPI, enabling real-time natural language interactions.
+Integrated conversational memory and prompt engineering techniques to improve response relevance and user experience.
+Designed scalable backend architecture supporting AI-driven features for enterprise applications.
+
+
