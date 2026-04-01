@@ -10,8 +10,8 @@ load_dotenv()
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Create FastAPI app
-app = FastAPI(title="AI Chatbot API")
+# Create FastAPI chatbot
+chatbot = FastAPI(title="AI Chatbot API")
 
 # Request schema
 class ChatRequest(BaseModel):
@@ -22,12 +22,12 @@ class ChatResponse(BaseModel):
     response: str
 
 # Root endpoint
-@app.get("/")
+@chatbot.get("/")
 def read_root():
     return {"message": "AI Chatbot is running!"}
 
 # Chat endpoint
-@app.post("/chat", response_model=ChatResponse)
+@chatbot.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
         completion = client.chat.completions.create(
