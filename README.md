@@ -1,1 +1,7 @@
 # Projects
+# Projects 1
+chatbot.py -> 
+Uvicorn is an ASGI server designed for async frameworks like FastAPI, using an event loop for high concurrency. Gunicorn is a pre-fork WSGI server that manages multiple worker processes for scalability. In production, we typically combine Gunicorn with Uvicorn workers to get both async performance and process-level scalability.
+supportive files: .env, chatbot.py
+# Projects 2
+
