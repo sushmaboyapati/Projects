@@ -46,4 +46,3 @@ def chat(request: ChatRequest):
 
     except Exception as e:
         return ChatResponse(response=f"Error: {str(e)}")
-
